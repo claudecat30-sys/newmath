@@ -591,9 +591,9 @@ const synth={cancel(){_tok++;_busy=false;if(_wsrc){_wsrc.stop();_wsrc=null}if(_a
   get pending(){return false},
   getVoices(){return _nativeSynth?_nativeSynth.getVoices():[]},
   set onvoiceschanged(f){if(_nativeSynth)_nativeSynth.onvoiceschanged=f},
-  speak(u){u={text:mathPrep(String(u.text)).replace(/[\p{Extended_Pictographic}\uFE0F\u200d\ue000-\uf8ff]/gu,'').replace(/\s+/g,' ').trim(),lang:u.lang,rate:u.rate,pitch:u.pitch,voice:u.voice,onend:u.onend,onerror:u.onerror};const lang=u.lang.startsWith('zh')?'zh':'en';
+  speak(u){const _who=u.who;u={text:mathPrep(String(u.text)).replace(/[\p{Extended_Pictographic}\uFE0F\u200d\ue000-\uf8ff]/gu,'').replace(/\s+/g,' ').trim(),lang:u.lang,rate:u.rate,pitch:u.pitch,voice:u.voice,onend:u.onend,onerror:u.onerror};const lang=u.lang.startsWith('zh')?'zh':'en';
     const _comp=(lang,s)=>{const ix=window.AUDIO_INDEX||{};const parts=s.split(/(\d+)/);const out=[];for(const p of parts){if(p==="")continue;if(/^\d+$/.test(p)){const f=ix["num|"+(+p)];if(!f)return null;out.push({f});continue}const q=p.trim();if(_paren(q,s,out))continue;if(!q||/^[，、；：。！？（）()\s,.;:!?]+$/.test(q))continue;const f=_clip(lang,q);if(!f)return null;out.push({f})}return out.length?out:null};
-const _mk=s=>{const f=_clip(lang,s);if(f)return [{f}];const c=_comp(lang,s);if(c)return c;return null};const items=_segs(u.text).flatMap(s=>{const r=_mk(s);if(r)return r;const cs=(typeof chunks==='function')?chunks(s,17):[s];if(cs.length>1){const parts=cs.map(p=>_mk(p.trim()));if(parts.every(Boolean))return parts.flat()}if(lang==='zh'){const r2=_comp2(s);if(r2)return r2}return [{t:s}]});
+const _mk=s=>{if(_who==='s'){const fs=_clip('zhs',s);if(fs)return [{f:fs}]}const f=_clip(lang,s);if(f)return [{f}];const c=_comp(lang,s);if(c)return c;return null};const items=_segs(u.text).flatMap(s=>{const r=_mk(s);if(r)return r;const cs=(typeof chunks==='function')?chunks(s,17):[s];if(cs.length>1){const parts=cs.map(p=>_mk(p.trim()));if(parts.every(Boolean))return parts.flat()}if(lang==='zh'){const r2=_comp2(s);if(r2)return r2}return [{t:s}]});
     synth.cancel();_busy=true;u._t0=Date.now();_playQ(items,u,_tok)}};
 const tts={ok:('speechSynthesis' in window)&&typeof SpeechSynthesisUtterance!=='undefined',z1:null,z2:null,e1:null,e2:null,rate:.85,
  load(){if(!this.ok)return;const pick=()=>{const vs=synth.getVoices()||[];const tw=ZHV==='zh-TW';
@@ -603,10 +603,10 @@ const tts={ok:('speechSynthesis' in window)&&typeof SpeechSynthesisUtterance!=='
   pick();try{synth.onvoiceschanged=pick;}catch(e){}},
  speak(text,who='t',rate){rate=rate||this.rate;const zh=zhT(text);return new Promise(res=>{const est=Math.max(1100,(zh?vis(text)*270:text.length*75)/rate);
   if(!this.ok||!String(text).trim()){setTimeout(res,est);return;}let done=false,tm;const fin=()=>{if(done)return;done=true;clearTimeout(tm);res();};
-  try{const u=new SpeechSynthesisUtterance(text);u.lang=zh?ZHV:'en-US';const v=zh?(who==='s'?this.z2:this.z1):(who==='s'?this.e2:this.e1);if(v)u.voice=v;u.rate=rate*(who==='s'?1.04:1);u.pitch=who==='s'?1.45:0.95;u.onend=fin;u.onerror=fin;tm=setTimeout(fin,est*2+3500);synth.speak(u);}catch(e){setTimeout(fin,est);}});},
+  try{const u=new SpeechSynthesisUtterance(text);u.who=who;u.lang=zh?ZHV:'en-US';const v=zh?(who==='s'?this.z2:this.z1):(who==='s'?this.e2:this.e1);if(v)u.voice=v;u.rate=rate*(who==='s'?1.04:1);u.pitch=who==='s'?1.45:0.95;u.onend=fin;u.onerror=fin;tm=setTimeout(fin,est*2+3500);synth.speak(u);}catch(e){setTimeout(fin,est);}});},
  stop(){if(this.ok){try{synth.cancel();}catch(e){}}}};
 tts.load();
-const zhSpeak=(t,who='t',rate)=>{const s=String(t);if(/[一-鿿]/.test(s)){const p=new Promise(res=>synth.speak({text:s,lang:'zh-TW',rate:rate||tts.rate,onend:res,onerror:res}));if(window._talkHook)window._talkHook(who,p);return p;}return tts.speak(conv(t),who,rate)};
+const zhSpeak=(t,who='t',rate)=>{const s=String(t);if(/[一-鿿]/.test(s)){const p=new Promise(res=>synth.speak({text:s,lang:'zh-TW',who:who,rate:rate||tts.rate,onend:res,onerror:res}));if(window._talkHook)window._talkHook(who,p);return p;}return tts.speak(conv(t),who,rate)};
 const say=(t,who='t',rate)=>{const s=String(t);if(/[一-鿿]/.test(s))return new Promise(res=>synth.speak({text:s,lang:'zh-TW',rate:rate||tts.rate,onend:res,onerror:res}));return tts.speak(conv(t),who,rate)};
 let readTok=0;
 function mathPrep(t) {

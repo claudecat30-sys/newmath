@@ -548,7 +548,7 @@ const sfx={ctx:null,
 const ENA={raw:null,ctx:null,src:null,_res:null,buf:{},tok:0,missed:new Set(),
  split(s){return window.EN_RULES?EN_RULES.splitSent(s):[String(s)]},
  /* 回傳要依序播放的音檔清單（null 代表一小段停頓）；有任何一段沒有音檔就回傳 null */
- plan(t){const ix=window.AUDIO_INDEX;if(!ix||!window.EN_RULES)return null;const p=EN_RULES.planKeys(t,k=>!!ix[k]);return p.keys?p.keys.map(k=>k?ix[k]:null):null},
+ plan(t,who){const ix=window.AUDIO_INDEX;if(!ix||!window.EN_RULES)return null;if(who==='s'){const out=[];let ok=true;for(const p of EN_RULES.splitSent(String(t).replace(/。/g,'. ').replace(/\s+/g,' ').trim())){if(!/[A-Za-z0-9]/.test(p))continue;const f=ix['ens|'+p];if(f){out.push(f,null);continue}const q=EN_RULES.planKeys(p,k=>!!ix[k]);if(!q.keys){ok=false;break}out.push(...q.keys.map(k=>k?ix[k]:null))}if(ok&&out.length)return out}const p=EN_RULES.planKeys(t,k=>!!ix[k]);return p.keys?p.keys.map(k=>k?ix[k]:null):null},
  /* 沒有音檔時給瀏覽器語音讀的文字：同樣先依規則表轉換 */
  fallback(t){try{return window.EN_RULES?EN_RULES.splitSent(String(t).replace(/。/g,'. ')).map(s=>EN_RULES.render(EN_RULES.enSpeak(s).tokens)).join(' '):null}catch(e){return null}},
  async play(files,rate){this.stop();const tok=this.tok;const C=window.AudioContext||window.webkitAudioContext;if(!this.ctx&&C)this.ctx=new C();const c=this.ctx;if(!c)return;if(c.state==='suspended'){try{await c.resume()}catch(e){}}
@@ -565,7 +565,7 @@ const tts={ok:('speechSynthesis' in window)&&typeof SpeechSynthesisUtterance!=='
   const pz=tw?/Mei-Jia|HsiaoChen|HsiaoYu|Hanhan|Yating|Google/i:/Xiaoxiao|Tingting|Ting-Ting|普通話|Mandarin|Yaoyao|Huihui|Xiaoyi/i;this.z1=zh.find(v=>pz.test(v.name))||zh[0]||null;this.z2=zh.find(v=>v!==this.z1&&/Yunxi|Yunyang|Kangkang|Li-mu|Yunjian|Zhiwei|YunJhe/i.test(v.name))||this.z1;
   const en=vs.filter(v=>/^en[-_]?(US|GB)/i.test(v.lang));this.e1=en.find(v=>/Samantha|Jenny|Aria|Google US English|Karen|Moira|Libby|Zira/i.test(v.name))||en[0]||vs.find(v=>/^en/i.test(v.lang))||null;this.e2=en.find(v=>v!==this.e1&&/Guy|Daniel|Alex|Fred|David|Ryan|Google UK English Male/i.test(v.name))||this.e1;};
   pick();try{speechSynthesis.onvoiceschanged=pick;}catch(e){}},
- speak(text,who='t',rate){rate=rate||this.rate;{const raw=ENA.raw;ENA.raw=null;if(raw!=null&&!zhT(raw)){if(!/[A-Za-z0-9]/.test(raw))return new Promise(r=>setTimeout(r,250));const fs=ENA.plan(raw);if(fs)return ENA.play(fs,rate/.85*ENA.vr());ENA.miss(raw);const fb=ENA.fallback(raw);if(fb)text=fb}}const zh=zhT(text);return new Promise(res=>{const est=Math.max(1100,(zh?vis(text)*270:text.length*75)/rate);
+ speak(text,who='t',rate){rate=rate||this.rate;{const raw=ENA.raw;ENA.raw=null;if(raw!=null&&!zhT(raw)){if(!/[A-Za-z0-9]/.test(raw))return new Promise(r=>setTimeout(r,250));const fs=ENA.plan(raw,who);if(fs)return ENA.play(fs,rate/.85*ENA.vr());ENA.miss(raw);const fb=ENA.fallback(raw);if(fb)text=fb}}const zh=zhT(text);return new Promise(res=>{const est=Math.max(1100,(zh?vis(text)*270:text.length*75)/rate);
   if(!this.ok||!String(text).trim()){setTimeout(res,est);return;}let done=false,tm;const fin=()=>{if(done)return;done=true;clearTimeout(tm);res();};
   try{const u=new SpeechSynthesisUtterance(text);u.lang=zh?ZHV:'en-US';const v=zh?(who==='s'?this.z2:this.z1):(who==='s'?this.e2:this.e1);if(v)u.voice=v;u.rate=rate*(who==='s'?1.04:1);u.pitch=who==='s'?1.45:0.95;u.onend=fin;u.onerror=fin;tm=setTimeout(fin,est*2+3500);speechSynthesis.speak(u);}catch(e){setTimeout(fin,est);}});},
  stop(){ENA.stop();if(this.ok){try{speechSynthesis.cancel();}catch(e){}}}};

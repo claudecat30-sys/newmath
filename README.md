@@ -14,11 +14,11 @@ icon.png            產品圖示(頁面的 favicon 也用這張)
 start.bat           本機測試用(需要 Python)
 zh/
   index.html        繁體中文版頁面
-  audio/            音檔 95,883 個(約 1.35 GB)與索引 index.js
+  audio/            音檔 97,123 個(約 1.33 GB)與索引 index.js
 en/
   index.html        英文版頁面
   en-rules.js       英文讀音規則表(頁面播放時會用到,必須一起上傳)
-  audio/            音檔 36,642 個(約 634 MB)與索引 index.js
+  audio/            音檔 37,337 個(約 648 MB)與索引 index.js
 docs/               英文數學讀音規則的說明
 ```
 
@@ -41,7 +41,8 @@ docs/               英文數學讀音規則的說明
 
 ## 語音
 
-- 繁體版:Azure `zh-TW-HsiaoChenNeural`。英文版:Azure `en-US-SaraNeural`,語速 0.80。
+- 老師與旁白:繁體版 Azure `zh-TW-HsiaoChenNeural`;英文版 Azure `en-US-SaraNeural`,語速 0.80。
+- 動畫裡的學生台詞(男學生):繁體版 `zh-TW-YunJheNeural`,音調 +18%;英文版 `en-US-BrandonNeural`,音調 +12%、語速 0.85。索引鍵是 `zhs|句段`、`ens|句子`,頁面播放學生台詞時先找這些鍵,找不到才用老師的音檔。
 - 音檔已去除前後靜音。
 - `audio/index.js` 會設定 `window.AUDIO_INDEX`,是「文字 → 音檔檔名」的對照表。
 - 固定句子(課文、動畫台詞、題庫)是整句一個音檔;帶隨機數字的句子(動手玩的練習題、遊戲題目)由頁面把「文字片段」和「數字」的音檔依序播放拼起來。
