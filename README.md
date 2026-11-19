@@ -6,6 +6,36 @@
 
 這份和「DINO AI 數學遊樂園」是不同的產品:遊樂園只開放遊戲,這份六個分頁全部開放。
 
+## 連結
+
+以下連結都不需要帳號就能開啟(2026-11-19 確認)。
+
+### 繁體中文 ＋ 英文版(本儲存庫)
+
+| 用途 | 連結 |
+|---|---|
+| 線上預覽入口(自動轉到繁體版) | https://claudecat30-sys.github.io/newmath/ |
+| 繁體中文版 | https://claudecat30-sys.github.io/newmath/zh/index.html |
+| 英文版(可開啟繁體中文翻譯) | https://claudecat30-sys.github.io/newmath/en/index.html |
+| 儲存庫(原始檔) | https://github.com/claudecat30-sys/newmath |
+| 整包下載(ZIP,約 2 GB) | https://github.com/claudecat30-sys/newmath/archive/refs/heads/main.zip |
+| 更新紀錄(逐筆提交) | https://github.com/claudecat30-sys/newmath/commits/main |
+
+兩個版本可以用頁面分頁列右邊的「🌐 EN」「🌐 中文」按鈕互相切換,切換後會留在同一個單元、同一個分頁。網址後面可以加 `#單元代號-分頁` 直接開到指定位置,例如 `.../zh/index.html#ka1-video`。
+
+### 簡體中文 ＋ 英文版
+
+**目前沒有。** 這個儲存庫只有繁體中文版(`zh/`)與英文版(`en/`),GitHub 上也沒有其他儲存庫放新課綱數學的簡體中文版。英文版的「中文翻譯」顯示的是繁體中文。
+
+### 相關頁面(在其他儲存庫)
+
+| 內容 | 連結 |
+|---|---|
+| 新課綱數學 · 特色介紹(中文) | https://claudecat30-sys.github.io/dino-ai-pages/newmath-intro/ |
+| 新課綱數學 · 特色介紹(英文) | https://claudecat30-sys.github.io/dino-ai-pages/newmath-intro/?lang=en |
+| 特色介紹頁的儲存庫 | https://github.com/claudecat30-sys/dino-ai-pages |
+| DINO AI 數學遊樂園(不同產品,只有遊戲) | https://claudecat30-sys.github.io/newmathpark/ |
+
 ## 內容
 
 ```
