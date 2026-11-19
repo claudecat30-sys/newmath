@@ -436,8 +436,8 @@ svg.fig,svg.fig text{letter-spacing:0}
 .stbl td,.stbl th{white-space:nowrap}
 .stbl th,.stbl td{padding:3px 6px;font-size:15px}
 .ptbl{border-collapse:collapse;margin:6px auto;font-size:12px}.ptbl th,.ptbl td{border:1px solid #9fb8a8;padding:3px 4px;text-align:center;white-space:nowrap}.ptbl td{font:800 20px ui-monospace,monospace;height:28px}
-</style><style>#langBtn{order:10;flex:none;white-space:nowrap;margin-left:auto}#nav{max-width:calc(100% - 84px)}</style></head><body><header><div class="hbar"><button class="menuBtn" id="menuBtn">☰ 目錄</button><h1 id="hTitle">📚 DINO AI 新課綱數學</h1><button class="menuBtn" id="zyBtn" style="display:none" onclick="toggleZY()">注音</button><button class="menuBtn" id="trBtn" style="display:none">中文翻譯：關</button>
-<button class="menuBtn" id="langBtn"></button>
+</style><style>#langBtn{order:10;flex:none;white-space:nowrap;margin-left:auto}#nav{max-width:calc(100% - 84px)}#fsBtn{order:11;flex:none;white-space:nowrap;display:none}html.fsok #fsBtn{display:inline-block}#fsBtn.fsOn{background:#fff;color:#2f8f5b}html.fsok #nav{max-width:calc(100% - 132px)}</style></head><body><header><div class="hbar"><button class="menuBtn" id="menuBtn">☰ 目錄</button><h1 id="hTitle">📚 DINO AI 新課綱數學</h1><button class="menuBtn" id="zyBtn" style="display:none" onclick="toggleZY()">注音</button><button class="menuBtn" id="trBtn" style="display:none">中文翻譯：關</button>
+<button class="menuBtn" id="langBtn"></button><button class="menuBtn" id="fsBtn" onclick="toggleFS()"></button>
 <nav id="nav"><button data-t="read">📖 閱讀</button><button data-t="video">🎬 動畫</button><button data-t="lab">🧪 動手玩</button><button data-t="game">🎮 遊戲</button><button data-t="quiz">📝 測驗</button><button data-t="rec">📊 記錄</button></nav></div></header>
 <main>
 <section class="tab" id="t-menu"><div id="menuBody"></div></section>
@@ -10755,6 +10755,19 @@ if(typeof tts!=='undefined'&&tts.speak){const _sp=tts.speak.bind(tts);tts.speak=
 
 /* 語言切換按鈕要前往的頁面：上線時依實際網址調整這一行即可 */
 const LANG_SWITCH_URL=LG==='en'?'../zh/index.html':'../en/index.html';
+/*fullscreen-toggle-v1*/
+const FS_OK=(function(){const d=document.documentElement;return !!(d.requestFullscreen||d.webkitRequestFullscreen)&&document.fullscreenEnabled!==false&&document.webkitFullscreenEnabled!==false;})();
+if(FS_OK)document.documentElement.classList.add('fsok');
+function fsOn(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
+function fsLabel(){return fsOn()?(LG==='en'?'⛶ Exit':'⛶ 還原'):(LG==='en'?'⛶ Full screen':'⛶ 全螢幕');}
+function fsTitle(){return fsOn()?(LG==='en'?'Exit full screen':'離開全螢幕'):(LG==='en'?'Full screen':'切換成全螢幕');}
+function fsPaint(){const b=document.getElementById('hFs')||document.getElementById('fsBtn');if(b){b.textContent=b.id==='fsBtn'?'⛶':fsLabel();b.classList.toggle('fsOn',fsOn());b.title=fsTitle();b.setAttribute('aria-label',fsTitle());}}
+function toggleFS(){try{const d=document.documentElement;
+ if(fsOn())(document.exitFullscreen||document.webkitExitFullscreen).call(document);
+ else{const p=(d.requestFullscreen||d.webkitRequestFullscreen).call(d);if(p&&p.catch)p.catch(function(){});}}catch(e){}}
+['fullscreenchange','webkitfullscreenchange'].forEach(function(ev){document.addEventListener(ev,fsPaint);});
+fsPaint();
+
 (function(){const b=document.getElementById('langBtn');if(!b)return;b.textContent=LG==='en'?'🌐 中文':'🌐 EN';b.title=LG==='en'?'切換到中文版':'Switch to English';
  b.onclick=()=>{try{stopAll()}catch(e){}location.href=LANG_SWITCH_URL+(location.hash||'')};})();
 
